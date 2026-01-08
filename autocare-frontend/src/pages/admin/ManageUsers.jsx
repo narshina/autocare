@@ -22,32 +22,28 @@ export default function ManageUsers() {
   const loadUsers = async () => {
     try {
       setLoading(true);
-
       const res = await adminGetUsers();
 
-      // ✅ FILTER OUT ADMIN USERS
       const normalUsers = (res.users || []).filter(
         (u) => u.role !== "admin"
       );
 
       setUsers(normalUsers);
 
-      // ✅ load vehicle count safely
       normalUsers.forEach(async (u) => {
         try {
           const v = await adminGetUserVehicles(u._id);
           setVehicleCount((prev) => ({
             ...prev,
-            [u._id]: v.vehicles.length,
+            [u._id]: v.vehicles.length
           }));
         } catch {
           setVehicleCount((prev) => ({
             ...prev,
-            [u._id]: 0,
+            [u._id]: 0
           }));
         }
       });
-
     } catch {
       toast.error("Failed to load users");
     } finally {
@@ -68,25 +64,28 @@ export default function ManageUsers() {
   };
 
   return (
-    <div className="pt-24 px-6 min-h-screen bg-black text-white">
-
+    <div className="pt-24 px-4 sm:px-6 min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black text-white">
       {/* HEADER */}
       <motion.h1
-        initial={{ opacity: 0, y: -10 }}
+        initial={{ opacity: 0, y: -12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-3xl font-extrabold text-red-500 mb-6"
+        className="text-2xl sm:text-3xl font-extrabold text-red-500 mb-6"
       >
         Manage Users
       </motion.h1>
 
       {/* LOADING */}
       {loading && (
-        <p className="text-center text-gray-400">Loading users…</p>
+        <p className="text-center text-gray-400 animate-pulse">
+          Loading users…
+        </p>
       )}
 
       {/* EMPTY */}
       {!loading && users.length === 0 && (
-        <p className="text-center text-gray-400">No users found</p>
+        <p className="text-center text-gray-400">
+          No users found
+        </p>
       )}
 
       {/* USER LIST */}
@@ -94,44 +93,80 @@ export default function ManageUsers() {
         {users.map((u) => (
           <motion.div
             key={u._id}
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            whileHover={{ scale: 1.01 }}
-            className="p-4 rounded-2xl border border-red-600 bg-zinc-950 flex justify-between items-center"
+            whileHover={{ scale: 1.02 }}
+            className="
+              rounded-2xl
+              bg-white/5 backdrop-blur-xl
+              border border-red-500/40
+              p-4 sm:p-5
+              shadow-xl shadow-red-900/20
+              flex flex-col sm:flex-row
+              sm:items-center
+              sm:justify-between
+              gap-4
+            "
           >
             {/* USER INFO */}
-            <div>
-              <p className="font-bold text-lg">{u.name}</p>
-              <p className="text-gray-400 text-sm">{u.email}</p>
+            <div className="space-y-1">
+              <p className="font-bold text-base sm:text-lg">
+                {u.name}
+              </p>
 
-              <p className="text-xs mt-1">
+              <p className="text-gray-400 text-sm break-all">
+                {u.email}
+              </p>
+
+              <p className="text-xs">
                 Vehicles:
-                <span className="text-green-400 font-semibold">
-                  {" "}
+                <span className="text-green-400 font-semibold ml-1">
                   {vehicleCount[u._id] ?? "--"}
                 </span>
               </p>
             </div>
 
             {/* ACTION BUTTONS */}
-            <div className="flex gap-3">
-
-              <button
+            <div className="
+              flex flex-col sm:flex-row
+              gap-3
+              w-full sm:w-auto
+            ">
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.05 }}
                 onClick={() =>
                   navigate(`/admin/manage-users/${u._id}`)
                 }
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold"
+                className="
+                  w-full sm:w-auto
+                  px-4 py-2
+                  bg-gradient-to-r from-blue-600 to-blue-700
+                  hover:shadow-blue-600/40
+                  rounded-xl
+                  font-semibold
+                  shadow-lg
+                "
               >
                 View Vehicles
-              </button>
+              </motion.button>
 
-              <button
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.05 }}
                 onClick={() => deleteUser(u._id)}
-                className="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-xl font-semibold"
+                className="
+                  w-full sm:w-auto
+                  px-4 py-2
+                  bg-gradient-to-r from-red-600 to-red-700
+                  hover:shadow-red-600/40
+                  rounded-xl
+                  font-semibold
+                  shadow-lg
+                "
               >
                 Delete
-              </button>
-
+              </motion.button>
             </div>
           </motion.div>
         ))}

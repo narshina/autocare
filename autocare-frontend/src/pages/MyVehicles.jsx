@@ -199,7 +199,7 @@ export default function MyVehicles() {
                   onClick={() => openEditModal(vehicle)}
                   className="flex-1 py-2 bg-black text-white rounded text-sm"
                 >
-                  Edit
+                  Update
                 </button>
 
                 <button
