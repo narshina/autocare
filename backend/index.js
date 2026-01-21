@@ -14,7 +14,18 @@ const port = 5000;
 /* =======================
    ✅ CORS (ENOUGH FOR PREFLIGHT)
 ======================= */
-app.use(cors());
+import cors from "cors";
+
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://autocare-2.onrender.com"
+    ],
+    credentials: true,
+  })
+);
+
 
 
 /* =======================
